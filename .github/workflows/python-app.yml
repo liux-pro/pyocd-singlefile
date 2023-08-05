@@ -24,4 +24,4 @@ jobs:
     - name: Install pyocd
       run: pip install pyocd
     - name: Build pyocd.exe
-      run: python pyocd_entry.spec
+      run: pyinstaller pyocd_entry.spec
