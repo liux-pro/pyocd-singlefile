@@ -20,7 +20,30 @@ capstone_libs = collect_dynamic_libs("capstone")
 
 
 
-cpm_libs = []
+# CPM's native lib doesn't match the patterns that collect_dynamic_libs() expects.
+cpm_path = get_package_paths('cmsis_pack_manager')[1]
+if is_windows:
+    # Example: _native__lib.cp37-win_amd64.pyd
+    lib_prefix = "_native__lib.cp3"
+    lib_suffix = ".pyd"
+    lib_plat = "-win_amd64" if is_os_64bit else "-win32"
+    lib_name = lib_prefix + pyversion[1] + lib_plat + lib_suffix
+    matches = glob.glob(os.path.join(cpm_path, lib_name))
+    if matches:
+        cpm_lib_name = matches[0]
+    else:
+        raise Exception("failed to find cmsis-pack-manager native library")
+else:
+    cpm_lib_name = "_native__lib.so"
+
+# 修改文件加载路径
+import shutil
+from PyInstaller.utils.hooks import get_package_paths
+cmsis_pack_manager_dir = get_package_paths('cmsis_pack_manager')[1]
+shutil.copy("_native.py", cmsis_pack_manager_dir)
+
+cpm_libs = [(os.path.join(cpm_path, cpm_lib_name), "cmsis_pack_manager")]
+
 
 binaries = capstone_libs + cpm_libs
 binaries += [(os.path.join(get_package_paths('libusb_package')[1], r"libusb-1.0.dll"), ".")]
