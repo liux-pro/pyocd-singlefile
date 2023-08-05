@@ -62,4 +62,5 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None)
+          entitlements_file=None,
+          icon="pyocd.ico")  # 设置程序的图标
