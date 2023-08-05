@@ -5,9 +5,6 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   build:
 
@@ -25,3 +22,13 @@ jobs:
       run: pip install pyocd
     - name: Build pyocd.exe
       run: pyinstaller pyocd_entry.spec
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        # github的release必须和一个tag关联，同时设置tag和commit后，这个release-action可以自动创建一个tag来包含release
+        tag: release
+        # commit指向一个分支或者commit id
+        commit: master
+        artifacts: dist/pyocd.exe
+        body: pyocd
